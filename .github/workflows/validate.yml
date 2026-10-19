@@ -1,0 +1,25 @@
+name: Validate Arch package
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container: archlinux:base-devel
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packaging tools and runtime dependencies
+        run: |
+          pacman -Syu --noconfirm --needed git python namcap desktop-file-utils sudo
+          useradd -m builder
+          bash -c 'source PKGBUILD; pacman -S --noconfirm --needed "${depends[@]}"'
+          chown -R builder:builder "$GITHUB_WORKSPACE"
+      - name: Build and validate as an unprivileged user
+        run: sudo -u builder bash scripts/validate.sh

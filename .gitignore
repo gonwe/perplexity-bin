@@ -1,0 +1,9 @@
+/src/
+/pkg/
+/*.deb
+/*.tar.*
+/*.pkg.tar.*
+/data.tar.*
+/control.tar.*
+/debian-binary
+__pycache__/
